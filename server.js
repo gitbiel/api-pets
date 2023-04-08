@@ -10,24 +10,57 @@ const proprietarios = [];
 const pets = [];
 
 // cadastrar proprietario
-app.post('/proprietario', (request, response) => {
+app.post('/proprietarios', (request, response) => {
   const { nome, cpf, telefone } = request.body;
+
+  if(!nome || !telefone || !cpf){
+    return response.status(404).json({
+      message: 'Necessário cadastrar todos os dados: nome, telefone e cpf',
+    });
+  }
+
+  if(typeof cpf !== 'string') {
+    return response.status(404).send('cpf precisa ser string')
+  }
+
+  if(cpf.length !== 11) {
+    return response.status(404).send('cpf precisa ter 11 números')
+  }
+
+  if(typeof telefone !== 'string') {
+    return response.status(404).send('telefone precisa ser string')
+  }
+
+  if(telefone.length !== 11) {
+    return response.status(404).send('telefone precisa ter 11 números')
+  }
   
-  const proprietario = { 
+  const novoProprietario = { 
+    id: randomUUID(),
     nome,
     cpf,
-    telefone,
-    id: randomUUID()
+    telefone
   };
 
-  const index = proprietarios.findIndex(item => item.cpf == proprietario.cpf||item.telefone == proprietario.telefone);
+  const proprietarioEncontrado = proprietarios.find((proprietario) => (
+    proprietario.cpf == novoProprietario.cpf
+    || proprietario.telefone == novoProprietario.telefone)
+  );
 
-  if(index === -1) {
-    proprietarios.push(proprietario);
-    return response.status(201).send('Proprietário cadastrado com sucesso!');
-  } else {
-    return response.status(400).send('cpf ou telefone já existentes');
+  if(proprietarioEncontrado) {
+    return response.status(400).json({
+      message: 'Usuário já existe!',
+      detalhes: 'cpf ou telefone já estão cadastrados',
+    });
   }
+
+  proprietarios.push(novoProprietario);
+  return response.status(201).send('Proprietário cadastrado com sucesso!');
+})
+
+// listar todos os proprietarios
+app.get('/proprietarios', (req, res) => {
+  return res.send(200, proprietarios);
 })
 
 // cadastrar pets
@@ -51,20 +84,21 @@ app.post('/pets', (request, response) => {
   } else {
     return response.status(400).send('id de pet já existente');
   }
-
 })
 
-// listar todos os proprietarios
-app.get('/proprietarios', (req, res) => {
-  return res.send(200, proprietarios);
-})
 
 //listar proprietario pelo id
-app.get('/proprietarios/:id', (req, res) => {
-  function buscarProprietarioPorId(id) {
-    return proprietarios.filter(proprietario => proprietario.id == id)
+app.get('/proprietarios/:id', (req, response) => {
+  const { id } = req.params;
+  const proprietarioEncontrado = proprietarios.find((proprietario) => proprietario.id === id);
+
+  if(!proprietarioEncontrado) {
+    return response.status(404).json({
+      message: 'Usuário não encontrado!'
+    })
   }
-  res.json(buscarProprietarioPorId(req.params.id))
+
+  response.json(proprietarioEncontrado);
 })
 
 app.get('/proprietarios/:id/pets', (req, res) => {
