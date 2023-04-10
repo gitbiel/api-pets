@@ -82,26 +82,37 @@ app.get('/proprietarios', (req, res) => {
 
 // cadastrar pets
 app.post('/pets', (request, response) => {
-  const { nome, idade, peso, raça, proprietarioId } = request.body;
+  const { nome, idade, peso, raca, proprietarioId } = request.body;
+
+  if(!nome || !idade || !peso || !raca || !proprietarioId){
+    return response.status(404).json({
+      message: 'Necessário cadastrar todos os dados: nome, idade, peso, raca, roprietarioId',
+    });
+  }
+
+  // Para cadastrar um Pet
+  // ele tem que ser uma posse
+  // de um proprietario existente
+  const donoEncontrado = proprietarios.find(({ id }) => id === proprietarioId);
+
+  if(!donoEncontrado) {
+    return response.status(404).json({
+      message: 'O proprietario informado não existe',
+    });
+  }
   
-  const pet = {
+  const novoPet = {
+    id: randomUUID(),
     nome,
     proprietarioId,
     idade,
     peso,
-    raça,
-    id: randomUUID()
+    raca
   };
 
-  const index = pets.findIndex(item => item.id == pet.id)
-  
-  if(index === -1) {
-    pets.push(pet);
-    return response.status(201).send('Pet cadastrado com sucesso!');""
-  } else {
-    return response.status(400).send('id de pet já existente');
-  }
-})
+  pets.push(novoPet);
+  return response.status(201).send('Pet cadastrado com sucesso!');
+});
 
 
 //listar proprietario pelo id
