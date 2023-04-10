@@ -137,8 +137,8 @@ app.get('/proprietarios/:id/pets', (req, res) => {
 })
 
 // listar todos os pets
-app.get('/pets', (req, res) => {
-  return res.send(200, pets);
+app.get('/pets', (_request, response) => {
+  return response.send(200, pets);
 })
 
 // listar pet pelo id
