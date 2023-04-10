@@ -129,11 +129,29 @@ app.get('/proprietarios/:id', (req, response) => {
   response.json(proprietarioEncontrado);
 })
 
-app.get('/proprietarios/:id/pets', (req, res) => {
-  function petsPorId(proprietarioId) {
-    return {pets: pets.filter(pet => pet.proprietarioId == proprietarioId)}
+// Listar todos os pets de um proprietario pelo id
+app.get('/proprietarios/:id/pets', (request, response) => {
+  const { id } = request.params;
+  const proprietarioEncontrado = proprietarios.find((proprietario) => proprietario.id === id);
+
+  if(!proprietarioEncontrado) {
+    return response.status(404).json({
+      message: 'Proprietario não encontrado!'
+    })
   }
-  res.json(petsPorId(req.params.id))
+
+  const petsDoProprietario = pets.filter(pet => pet.proprietarioId === id)
+
+  if(petsDoProprietario.length === 0) {
+    return response.status(404).json({
+      message: 'Proprietário não possui pets!'
+    })
+  }
+
+  return response.json({
+    proprietario: proprietarioEncontrado.nome,
+    pets: petsDoProprietario
+  })
 })
 
 // listar todos os pets
