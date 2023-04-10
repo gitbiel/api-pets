@@ -122,7 +122,7 @@ app.get('/proprietarios/:id', (req, response) => {
 
   if(!proprietarioEncontrado) {
     return response.status(404).json({
-      message: 'Usuário não encontrado!'
+      message: 'Proprietario não encontrado!'
     })
   }
 
@@ -160,16 +160,48 @@ app.get('/pets', (_request, response) => {
 })
 
 // listar pet pelo id
-app.get('/pet/:id', (req, res) => {
-  function buscarPetPorId(id) {
-    return pets.filter(pet => pet.id == id)
+app.get('/pets/:id', (request, response) => {
+  const { id } = request.params
+  const petEncontrado = pets.find(pet => pet.id == id);
+
+  if(!petEncontrado) {
+    return response.status(404).json({
+      message: 'Pet não encontrado!'
+    })
   }
-  res.json(buscarPetPorId(req.params.id))
+
+  response.json(petEncontrado)
 })
 
-app.put('proprietarios/:id', (req, res) => {
-  const id = req.params.id
-  const { telefone } = request.body;
+app.put('/proprietarios/:id', (request, response) => {
+  const indexProprietario = proprietarios.findIndex(({ id }) => id === request.params.id);
+
+  if(indexProprietario === -1) {
+    return response.status(404).json({
+      message: 'Proprietario não encontrado!'
+    })
+  }
+
+  const { nome, telefone } = request.body;
+
+  if(!nome || !telefone ){
+    return response.status(404).json({
+      message: 'Necessário enviar os dados: nome e telefone',
+    });
+  }
+
+  if(typeof telefone !== 'string') {
+    return response.status(404).send('telefone precisa ser string')
+  }
+
+  if(telefone.length !== 11) {
+    return response.status(404).send('telefone precisa ter 11 números')
+  }
+
+  proprietarios[indexProprietario].nome = nome;
+  proprietarios[indexProprietario].telefone = telefone;
+
+  return response.json({ message: 'Proprietario atualizado com sucesso!'})  
 })
 
 app.listen(port, ()=> {
