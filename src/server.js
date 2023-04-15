@@ -1,84 +1,14 @@
-import express, { request } from 'express';
+import express from 'express';
 import bodyParser from 'body-parser';
-import { randomUUID } from 'crypto'
+import { randomUUID } from 'crypto';
+
+// rotas da aplicação
+import { routes } from './routes/index.js';
 
 const app = express();
 app.use(bodyParser.json());
+app.use('/', routes)
 const port = process.env.PORT || 3000;
-
-const proprietarios = [
-  {
-		"id": "cf5af97e-24f5-499b-940e-29a792acba79",
-		"nome": "biel",
-		"cpf": "14340478509",
-		"telefone": "11940800022"
-	}
-];
-
-const pets = [
-  {
-		"id": "2a1fb52b-7b83-45a9-87bf-76a7ba005136",
-		"nome": "spike",
-		"proprietarioId": "cf5af97e-24f5-499b-940e-29a792acba79",
-		"idade": 6,
-		"peso": 20,
-		"raca": "border collie"
-	}
-];
-
-// cadastrar proprietario
-app.post('/proprietarios', (request, response) => {
-  const { nome, cpf, telefone } = request.body;
-
-  if(!nome || !telefone || !cpf){
-    return response.status(404).json({
-      message: 'Necessário cadastrar todos os dados: nome, telefone e cpf',
-    });
-  }
-
-  if(typeof cpf !== 'string') {
-    return response.status(404).send('cpf precisa ser string')
-  }
-
-  if(cpf.length !== 11) {
-    return response.status(404).send('cpf precisa ter 11 números')
-  }
-
-  if(typeof telefone !== 'string') {
-    return response.status(404).send('telefone precisa ser string')
-  }
-
-  if(telefone.length !== 11) {
-    return response.status(404).send('telefone precisa ter 11 números')
-  }
-  
-  const novoProprietario = { 
-    id: randomUUID(),
-    nome,
-    cpf,
-    telefone
-  };
-
-  const proprietarioEncontrado = proprietarios.find((proprietario) => (
-    proprietario.cpf == novoProprietario.cpf
-    || proprietario.telefone == novoProprietario.telefone)
-  );
-
-  if(proprietarioEncontrado) {
-    return response.status(400).json({
-      message: 'Usuário já existe!',
-      detalhes: 'cpf ou telefone já estão cadastrados',
-    });
-  }
-
-  proprietarios.push(novoProprietario);
-  return response.status(201).send('Proprietário cadastrado com sucesso!');
-})
-
-// listar todos os proprietarios
-app.get('/proprietarios', (req, res) => {
-  return res.send(200, proprietarios);
-})
 
 // cadastrar pets
 app.post('/pets', (request, response) => {
@@ -115,19 +45,6 @@ app.post('/pets', (request, response) => {
 });
 
 
-//listar proprietario pelo id
-app.get('/proprietarios/:id', (req, response) => {
-  const { id } = req.params;
-  const proprietarioEncontrado = proprietarios.find((proprietario) => proprietario.id === id);
-
-  if(!proprietarioEncontrado) {
-    return response.status(404).json({
-      message: 'Proprietario não encontrado!'
-    })
-  }
-
-  response.json(proprietarioEncontrado);
-})
 
 // Listar todos os pets de um proprietario pelo id
 app.get('/proprietarios/:id/pets', (request, response) => {
@@ -154,10 +71,6 @@ app.get('/proprietarios/:id/pets', (request, response) => {
   })
 })
 
-// listar todos os pets
-app.get('/pets', (_request, response) => {
-  return response.send(200, pets);
-})
 
 // listar pet pelo id
 app.get('/pets/:id', (request, response) => {
