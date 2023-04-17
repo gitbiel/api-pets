@@ -1,48 +1,15 @@
-import { randomUUID } from 'crypto';
-
-import { proprietarios } from '../db/index.js'
-import { pets } from '../db/index.js'
+import { proprietarios, pets } from '../db/index.js'
+import proprietarioService from '../services/proprietarios.service.js'
 
 class ProprietarioController {
   create(request, response) {
     const { nome, cpf, telefone } = request.body;
+    const result = proprietarioService.create({ nome, cpf, telefone });
 
-     if(typeof cpf !== 'string') {
-      return response.status(404).send('cpf precisa ser string')
+    if(result?.isError) {
+      return response.status(400).json({ message: result.message });
     }
   
-    if(cpf.length !== 11) {
-      return response.status(404).send('cpf precisa ter 11 números')
-    }
-  
-    if(typeof telefone !== 'string') {
-      return response.status(404).send('telefone precisa ser string')
-    }
-  
-    if(telefone.length !== 9) {
-      return response.status(404).send('telefone precisa ter 9 números')
-    }
-    
-    const novoProprietario = { 
-      id: randomUUID(),
-      nome,
-      cpf,
-      telefone
-    };
-  
-    const proprietarioEncontrado = proprietarios.find((proprietario) => (
-      proprietario.cpf == novoProprietario.cpf
-      || proprietario.telefone == novoProprietario.telefone)
-    );
-  
-    if(proprietarioEncontrado) {
-      return response.status(400).json({
-        message: 'Usuário já existe!',
-        detalhes: 'cpf ou telefone já estão cadastrados',
-      });
-    }
-  
-    proprietarios.push(novoProprietario);
     return response.status(201).send('Proprietário cadastrado com sucesso!');
   }
 
@@ -87,28 +54,14 @@ class ProprietarioController {
   }
 
   updateById(request, response) {
+    const { nome, telefone } = request.body;
+
     const indexProprietario = proprietarios.findIndex(({ id }) => id === request.params.id);
 
     if(indexProprietario === -1) {
       return response.status(404).json({
         message: 'Proprietario não encontrado!'
       });
-    };
-
-    const { nome, telefone } = request.body;
-
-    if(!nome || !telefone ){
-      return response.status(404).json({
-        message: 'Necessário enviar os dados: nome e telefone',
-      });
-    };
-
-    if(typeof telefone !== 'string') {
-      return response.status(404).send('telefone precisa ser string');
-    };
-
-    if(telefone.length !== 9) {
-      return response.status(404).send('telefone precisa ter 11 números');
     };
 
     proprietarios[indexProprietario].nome = nome;
