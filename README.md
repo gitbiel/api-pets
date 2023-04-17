@@ -41,14 +41,13 @@ Gabriel
   [] GET  /proprietarios/:id/pets
 }
 {
-  [] PUT /proprietarios/:id
-  [!] Não fez, sem vergonha
+  [x] PUT /proprietarios/:id
 }
 {
-  [] PUT     /proprietarios/:id 
+  [x] PUT     /pets/:id 
 }
 {
-  [] POST    /pets
+  [x] POST    /pets
   "raça" não colocamos atributos com acentos
 }
 
