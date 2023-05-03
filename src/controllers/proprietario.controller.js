@@ -58,7 +58,7 @@ class ProprietarioController {
     const result = proprietarioService.update({
       nome, telefone,
       proprietarioId: request.params.id
-      })
+    })
 
     if(result?.isError) {
       return response.status(400).json({ message: result.message });
@@ -68,26 +68,13 @@ class ProprietarioController {
   }
 
   deleteById(request, response) {
-    const indexProprietario = proprietarios.findIndex(({ id }) => id === request.params.id);
+    const result = proprietarioService.delete({
+      proprietarioId: request.params.id
+      })
 
-    if(indexProprietario === -1) {
-      return response.status(404).json({
-        message: 'Proprietário não encontrado'
-      });
-    };
-
-    const { id } = request.params;
-    const petsDoProprietario = pets.filter(pet => pet.proprietarioId === id);
-    if(petsDoProprietario.length > 0) {
-      return response.status(400).json({
-        message: 'Proprietário possui pets, remova os pets antes de deletar proprietário!'
-      });
-    };
-
-    proprietarios.splice(indexProprietario, 1);
-    return response.json({
-      message: 'Proprietário deletado com sucesso!'
-    });
+    if(result?.isError) {
+      return response.status(400).json({ message: result.message });
+    }
   }
 }
 

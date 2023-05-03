@@ -1,5 +1,5 @@
 import { randomUUID } from 'crypto';
-import { proprietarios } from '../db/index.js';
+import { proprietarios, pets } from '../db/index.js';
 
 class proprietarioService {
   create({ nome, cpf, telefone }) {
@@ -27,7 +27,6 @@ class proprietarioService {
   }
 
   update({nome, telefone, proprietarioId}) {
-
     const indexProprietario = proprietarios.findIndex(({ id }) => id === proprietarioId);
     
     if(indexProprietario === -1) {
@@ -39,6 +38,31 @@ class proprietarioService {
 
     proprietarios[indexProprietario].nome = nome;
     proprietarios[indexProprietario].telefone = telefone;
+  }
+
+  delete({proprietarioId}) {
+    const indexProprietario = proprietarios.findIndex(({ id }) => id === proprietarioId);
+
+    if(indexProprietario === -1) {
+      return {
+        isError: true,
+        message: 'Proprietário não encontrado'
+      };
+    };
+
+    const petsDoProprietario = pets.filter(pet => pet.proprietarioId === proprietarioId);
+    if(petsDoProprietario.length > 0) {
+      return {
+        isError: true,
+        message: 'Proprietário possui pets, remova os pets antes de deletar proprietário!'
+      };
+    };
+
+    proprietarios.splice(indexProprietario, 1);
+    return {
+      isError: true,
+      message: 'Proprietário deletado com sucesso!'
+    };
   }
 }
 
