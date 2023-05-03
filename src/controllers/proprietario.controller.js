@@ -58,7 +58,7 @@ class ProprietarioController {
   deleteById(request, response) {
     const result = proprietarioService.delete({
       proprietarioId: request.params.id
-      })
+    })
 
     if(result?.isError) {
       return response.status(400).json({ message: result.message });

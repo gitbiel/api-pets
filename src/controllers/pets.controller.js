@@ -18,16 +18,15 @@ class PetController {
   }
 
   listById(request, response) {
-    const { id } = request.params
-    const petEncontrado = pets.find(pet => pet.id == id);
+    const result = petService.listById({
+      petId: request.params.id
+    });
+
+    if(result?.isError) {
+      return response.status(404).json({ message: result.message });
+    }
   
-    if(!petEncontrado) {
-      return response.status(404).json({
-        message: 'Pet não encontrado!'
-      });
-    };
-  
-    response.json(petEncontrado);
+    response.json(result.petEncontrado);
   }
 
   updateById(request, response) {

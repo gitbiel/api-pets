@@ -25,6 +25,21 @@ class petService {
     pets.push(novoPet);
   }
 
+  listById({petId}) {
+    const petEncontrado = pets.find(pet => pet.id == petId);
+  
+    if(!petEncontrado) {
+      return {
+        isError: true,
+        message: 'Pet não encontrado!'
+      };
+    };
+
+    return {
+      petEncontrado
+    }
+  }
+
   update({nome, idade, peso, raca, petId}) {
     const indexPet = pets.findIndex(({ id }) => id === petId);
     
