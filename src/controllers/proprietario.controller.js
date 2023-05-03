@@ -55,17 +55,14 @@ class ProprietarioController {
 
   updateById(request, response) {
     const { nome, telefone } = request.body;
+    const result = proprietarioService.update({
+      nome, telefone,
+      proprietarioId: request.params.id
+      })
 
-    const indexProprietario = proprietarios.findIndex(({ id }) => id === request.params.id);
-
-    if(indexProprietario === -1) {
-      return response.status(404).json({
-        message: 'Proprietario não encontrado!'
-      });
-    };
-
-    proprietarios[indexProprietario].nome = nome;
-    proprietarios[indexProprietario].telefone = telefone;
+    if(result?.isError) {
+      return response.status(400).json({ message: result.message });
+    }
 
     return response.json({ message: 'Proprietario atualizado com sucesso!'});  
   }

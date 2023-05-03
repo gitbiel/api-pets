@@ -32,6 +32,7 @@ class PetController {
 
   updateById(request, response) {
     const indexPet = pets.findIndex(({ id }) => id === request.params.id);
+    const { nome, idade, peso, raca } = request.body;
 
     if(indexPet === -1) {
       return response.status(404).json({
@@ -39,7 +40,6 @@ class PetController {
       });
     };
 
-    const { nome, idade, peso, raca } = request.body;
 
     if(!nome || !idade ||!peso || !raca) {
       return response.status(404).json({

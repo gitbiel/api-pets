@@ -25,6 +25,21 @@ class proprietarioService {
    
     proprietarios.push(novoProprietario);
   }
+
+  update({nome, telefone, proprietarioId}) {
+
+    const indexProprietario = proprietarios.findIndex(({ id }) => id === proprietarioId);
+    
+    if(indexProprietario === -1) {
+      return {
+        isError: true,
+        message: 'Proprietario não encontrado!'
+      };
+    };
+
+    proprietarios[indexProprietario].nome = nome;
+    proprietarios[indexProprietario].telefone = telefone;
+  }
 }
 
 export default new proprietarioService()
