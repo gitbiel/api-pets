@@ -31,34 +31,16 @@ class PetController {
   }
 
   updateById(request, response) {
-    const indexPet = pets.findIndex(({ id }) => id === request.params.id);
     const { nome, idade, peso, raca } = request.body;
+    
+    const result = petService.update({
+      nome, idade, peso, raca,
+      petId: request.params.id
+    })
 
-    if(indexPet === -1) {
-      return response.status(404).json({
-        message: 'Pet não encontrado!'
-      });
-    };
-
-
-    if(!nome || !idade ||!peso || !raca) {
-      return response.status(404).json({
-        message: 'Necessário enviar os dados: nome, idade, peso e raca',
-      });
-    };
-
-    if(typeof idade !== 'number') {
-      return response.status(404).send('idade precisa ser número');
-    };
-
-    if(typeof peso !== 'number') {
-      return response.status(404).send('raca precisa ser número');
-    };
-
-    pets[indexPet].nome = nome;
-    pets[indexPet].idade = idade;
-    pets[indexPet].peso = peso;
-    pets[indexPet].raca = raca;
+    if(result?.isError) {
+      return response.status(400).json({ message: result.message });
+    }
     
     return response.json({ message: 'Pet atualizado com sucesso!'}); 
   }

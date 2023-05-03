@@ -4,7 +4,6 @@ import { pets  } from '../db/index.js';
 
 class petService {
   create({ nome, proprietarioId, idade, peso, raca }){
-
     const novoPet = {
       id: randomUUID(),
       nome,
@@ -24,6 +23,22 @@ class petService {
     }
   
     pets.push(novoPet);
+  }
+
+  update({nome, idade, peso, raca, petId}) {
+    const indexPet = pets.findIndex(({ id }) => id === petId);
+    
+    if(indexPet === -1) {
+      return {
+        isError: true,
+        message: 'Pet não encontrado!'
+      };
+    };
+
+    pets[indexPet].nome = nome;
+    pets[indexPet].idade = idade;
+    pets[indexPet].peso = peso;
+    pets[indexPet].raca = raca;
   }
 }
 
