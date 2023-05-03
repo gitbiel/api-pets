@@ -61,10 +61,10 @@ class ProprietarioController {
     })
 
     if(result?.isError) {
-      return response.status(400).json({ message: result.message });
+      return response.status(404).json({ message: result.message });
     }
 
-    return response.json({ message: 'Proprietario atualizado com sucesso!'});  
+    return response.send(200, 'Proprietário cadastrado com sucesso!');
   }
 
   deleteById(request, response) {
@@ -75,6 +75,8 @@ class ProprietarioController {
     if(result?.isError) {
       return response.status(400).json({ message: result.message });
     }
+
+    return response.json({ message: 'Pet deletado com sucesso!'});
   }
 }
 

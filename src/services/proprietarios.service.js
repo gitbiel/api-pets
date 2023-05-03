@@ -59,10 +59,6 @@ class proprietarioService {
     };
 
     proprietarios.splice(indexProprietario, 1);
-    return {
-      isError: true,
-      message: 'Proprietário deletado com sucesso!'
-    };
   }
 }
 

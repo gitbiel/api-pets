@@ -40,7 +40,19 @@ class petService {
     pets[indexPet].peso = peso;
     pets[indexPet].raca = raca;
   }
-}
 
+  delete({petId}) {
+    const indexPet = pets.findIndex(({ id }) => id === petId);
+
+    if(indexPet === -1) {
+      return {
+        isError: true,
+        message: 'Pet não encontrado'
+      };
+    };
+      
+    pets.splice(indexPet, 1);
+  }
+}
 
 export default new petService()
