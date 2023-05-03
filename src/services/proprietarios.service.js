@@ -26,6 +26,21 @@ class proprietarioService {
     proprietarios.push(novoProprietario);
   }
 
+  listById({proprietarioId}) {
+    const proprietarioEncontrado = proprietarios.find((proprietario) => proprietario.id === proprietarioId);
+  
+    if(!proprietarioEncontrado) {
+      return {
+        isError: true,
+        message: 'Proprietario não encontrado!'
+      };
+    }
+
+    return { 
+      proprietarioEncontrado
+    }
+  }
+
   update({nome, telefone, proprietarioId}) {
     const indexProprietario = proprietarios.findIndex(({ id }) => id === proprietarioId);
     

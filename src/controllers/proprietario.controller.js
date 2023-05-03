@@ -18,16 +18,15 @@ class ProprietarioController {
   }
 
   listById(request, response) {
-    const { id } = request.params;
-    const proprietarioEncontrado = proprietarios.find((proprietario) => proprietario.id === id);
+    const result = proprietarioService.listById({ 
+      proprietarioId: request.params.id
+    });
+
+    if(result?.isError) {
+      return response.status(404).json({ message: result.message });
+    };
   
-    if(!proprietarioEncontrado) {
-      return response.status(404).json({
-        message: 'Proprietario não encontrado!'
-      })
-    }
-  
-    return response.json(proprietarioEncontrado);
+    return response.json(result.proprietarioEncontrado);
   }
 
   listPetsProprietario(request, response) {
