@@ -21,9 +21,11 @@ class ProprietarioService {
 
   async listById({ proprietarioId }) {
     try {
-      const result = await ProprietarioRepository.listById({ id: proprietarioId });
+      const result = await ProprietarioRepository.listById({
+         id: proprietarioId 
+      });
 
-      return { proprietario: result.proprietario}
+      return { proprietario: result}
     } catch (error) {
       throw error
     }
