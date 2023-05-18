@@ -1,6 +1,5 @@
 import express, { request } from 'express';
 import bodyParser from 'body-parser';
-import { randomUUID } from 'crypto'
 import { routes } from './routes/index.js';
 
 const app = express();

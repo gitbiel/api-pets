@@ -1,43 +1,31 @@
-import { randomUUID } from 'crypto';
-import { proprietarios, pets } from '../db/index.js';
+import ProprietarioRepository from '../repositories/proprietario.repository.js'
 
-class proprietarioService {
-  create({ nome, cpf, telefone }) {
-
-    const novoProprietario = { 
-      id: randomUUID(),
-      nome,
-      cpf,
-      telefone
-    };
-
-    const proprietarioEncontrado = proprietarios.find((proprietario) => (
-      proprietario.cpf == novoProprietario.cpf
-      || proprietario.telefone == novoProprietario.telefone)
-    );
+class ProprietarioService {
+  async create({ nome, cpf, telefone }) {
+    const proprietarioEncontrado = await ProprietarioRepository.listByProprietario({ cpf })
 
     if(proprietarioEncontrado) {
-      return {
-        isError: true,
-        message: 'Usuário já existe! cpf ou telefone já estão cadastrados',
-      };
+      throw new Error('Proprietário já existe, cpf já cadastrado!');
     }
-   
-    proprietarios.push(novoProprietario);
+
+    return await ProprietarioRepository.create({ nome, cpf, telefone })
   }
 
-  listById({proprietarioId}) {
-    const proprietarioEncontrado = proprietarios.find((proprietario) => proprietario.id === proprietarioId);
-  
-    if(!proprietarioEncontrado) {
-      return {
-        isError: true,
-        message: 'Proprietario não encontrado!'
-      };
+  async list() {
+    try {
+      return await ProprietarioRepository.list();
+    } catch (error) {
+      throw error
     }
+  }
 
-    return { 
-      proprietarioEncontrado
+  async listById({ proprietarioId }) {
+    try {
+      const result = await ProprietarioRepository.listById({ id: proprietarioId });
+
+      return { proprietario: result.proprietario}
+    } catch (error) {
+      throw error
     }
   }
 
@@ -101,4 +89,4 @@ class proprietarioService {
   }
 }
 
-export default new proprietarioService()
+export default new ProprietarioService()

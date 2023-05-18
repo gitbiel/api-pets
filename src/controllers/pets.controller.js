@@ -1,16 +1,14 @@
-import { proprietarios, pets } from '../db/index.js';
-import petService from '../services/pets.service.js';
-
+import PetService from '../services/pets.service.js';
 class PetController {
-  create(request, response) {
-    const { nome, idade, peso, raca, proprietarioId } = request.body;
-    const result = petService.create({ nome, idade, peso, raca, proprietarioId });
-
-    if(result?.isError) {
+  async create(request, response) {
+    try {
+      const { nome, idade, peso, raca, proprietarioId } = request.body;
+      await PetService.create({ nome, idade, peso, raca, proprietarioId });
+        
+      return response.status(201).send('Pet cadastrado com sucesso!');
+    } catch (error) {
       return response.status(400).json({ message: result.message });
     }
-
-    return response.status(201).send('Pet cadastrado com sucesso!');
   }
 
   list(_request, response) {
@@ -18,7 +16,7 @@ class PetController {
   }
 
   listById(request, response) {
-    const result = petService.listById({
+    const result = PetService.listById({
       petId: request.params.id
     });
 
@@ -31,7 +29,7 @@ class PetController {
 
   updateById(request, response) {
     const { nome, idade, peso, raca } = request.body;
-    const result = petService.update({
+    const result = PetService.update({
       nome, idade, peso, raca,
       petId: request.params.id
     })
@@ -44,7 +42,7 @@ class PetController {
   }
 
   deleteById(request, response) {
-    const result = petService.delete({
+    const result = PetService.delete({
       petId: request.params.id
     })
 

@@ -2,8 +2,8 @@ import { randomUUID } from 'crypto';
 import { proprietarios } from '../db/index.js';
 import { pets  } from '../db/index.js';
 
-class petService {
-  create({ nome, proprietarioId, idade, peso, raca }){
+class PetService {
+  async create({ nome, proprietarioId, idade, peso, raca }){
     const novoPet = {
       id: randomUUID(),
       nome,
@@ -70,4 +70,4 @@ class petService {
   }
 }
 
-export default new petService()
+export default new PetService()

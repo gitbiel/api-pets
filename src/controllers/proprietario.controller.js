@@ -1,36 +1,39 @@
-import { proprietarios, pets } from '../db/index.js'
-import proprietarioService from '../services/proprietarios.service.js'
+import ProprietarioService from '../services/proprietarios.service.js'
 
 class ProprietarioController {
-  create(request, response) {
-    const { nome, cpf, telefone } = request.body;
-    const result = proprietarioService.create({ nome, cpf, telefone });
+  async create(request, response) {
+    try {
+      const { nome, cpf, telefone } = request.body;
+      await ProprietarioService.create({ nome, cpf, telefone });
 
-    if(result?.isError) {
-      return response.status(400).json({ message: result.message });
+      return response.status(201).send('Proprietário cadastrado com sucesso');
+    } catch (error) {
+      return response.status(400).json({ message: error.message });
     }
-  
-    return response.status(201).send('Proprietário cadastrado com sucesso!');
   }
 
-  list(_request, response) {
-    return response.send(200, proprietarios); 
+  async list(_request, response) {
+    try {
+      const result = await ProprietarioService.list();
+      return response.json(result);
+    } catch (error) {
+      return response.status(404).json({ message: error.message });
+    }
   }
+  async listById(request, response) {
+    try {
+      const result = await ProprietarioService.listById({ 
+        proprietarioId: request.params.id
+      });
 
-  listById(request, response) {
-    const result = proprietarioService.listById({ 
-      proprietarioId: request.params.id
-    });
-
-    if(result?.isError) {
-      return response.status(404).json({ message: result.message });
-    };
-  
-    return response.json(result.proprietarioEncontrado);
+      return response.json(result);
+    } catch (error) {
+    return response.status(404).json({ message: result.message });
+    }
   }
 
   listPetsProprietario(request, response) {
-    const result = proprietarioService.listPetsProprietario({ 
+    const result = ProprietarioService.listPetsProprietario({ 
       proprietarioId: request.params.id
     });
 
@@ -43,7 +46,7 @@ class ProprietarioController {
 
   updateById(request, response) {
     const { nome, telefone } = request.body;
-    const result = proprietarioService.update({
+    const result = ProprietarioService.update({
       nome, telefone,
       proprietarioId: request.params.id
     })
@@ -56,7 +59,7 @@ class ProprietarioController {
   }
 
   deleteById(request, response) {
-    const result = proprietarioService.delete({
+    const result = ProprietarioService.delete({
       proprietarioId: request.params.id
     })
 
