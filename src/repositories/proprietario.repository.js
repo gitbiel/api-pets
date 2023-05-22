@@ -1,6 +1,6 @@
 import sqlite3 from 'sqlite3';
 import { randomUUID } from 'crypto';
-import path, { resolve } from 'path';
+import path from 'path';
 
 const dbPath = path.resolve(new URL(import.meta.url).pathname, '../petshop_db');
 
@@ -37,10 +37,10 @@ class ProprietarioRepository {
     });
   }
 
-  async listById({ id }) {
+  async listById({ proprietarioId }) {
     return new Promise((resolve,reject) => {
       
-      this.db.get('SELECT * FROM proprietarios WHERE id = ?', id, (err, row) => {
+      this.db.get('SELECT * FROM proprietarios WHERE id = ?', proprietarioId, (err, row) => {
         if (err) {
           reject(err);
         } else if(!row){
@@ -64,6 +64,29 @@ class ProprietarioRepository {
       });
 
     });
+  }
+
+  async update({ nome, telefone, proprietarioId }) {
+    return new Promise((resolve, reject) => {
+      this.db.run('UPDATE proprietarios SET nome = ?,telefone = ? WHERE "id" = ?', [nome, telefone, proprietarioId], (err, row) => {
+        if (err) {
+          reject(err)
+        }  else {
+          resolve(row)
+        }
+      })
+    })
+  }
+
+  async delete({ proprietarioId }) {
+    return new Promise((resolve, reject ) => {
+      this.db.run('DELETE FROM proprietarios WHERE id = ?', proprietarioId, (err) => {
+        if(err) {
+          reject(err)
+        }
+        resolve()
+      })
+    })
   }
 
 }

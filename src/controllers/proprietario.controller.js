@@ -20,6 +20,7 @@ class ProprietarioController {
       return response.status(404).json({ message: error.message });
     }
   }
+  
   async listById(request, response) {
     try {
       const result = await ProprietarioService.listById({ 
@@ -28,7 +29,7 @@ class ProprietarioController {
 
       return response.json(result);
     } catch (error) {
-    return response.status(404).json({ message: result.message });
+    return response.status(404).json({ message: error.message });
     }
   }
 
@@ -44,30 +45,28 @@ class ProprietarioController {
     return response.json(result);
   }
 
-  updateById(request, response) {
-    const { nome, telefone } = request.body;
-    const result = ProprietarioService.update({
-      nome, telefone,
-      proprietarioId: request.params.id
-    })
-
-    if(result?.isError) {
-      return response.status(404).json({ message: result.message });
+  async updateById(request, response) {
+    try {
+      const { nome, telefone } = request.body;
+      const { id: proprietarioId } = request.params;
+      
+      await ProprietarioService.update({ nome, telefone, proprietarioId })
+      return response.status(204).send()
+    } catch (error) {
+      return response.status(404).json({ message: error.message });
     }
-
-    return response.send(200, 'Proprietário cadastrado com sucesso!');
   }
 
-  deleteById(request, response) {
-    const result = ProprietarioService.delete({
-      proprietarioId: request.params.id
-    })
-
-    if(result?.isError) {
-      return response.status(400).json({ message: result.message });
+  async deleteById(request, response) {
+    try {
+      await ProprietarioService.delete({
+        proprietarioId: request.params.id
+      })
+      
+      return response.status(204).send();
+    } catch (error) {
+      return response.status(400).json({ message: error.message });
     }
-
-    return response.json({ message: 'Pet deletado com sucesso!'});
   }
 }
 
