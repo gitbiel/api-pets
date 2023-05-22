@@ -2,9 +2,9 @@ import ProprietarioRepository from '../repositories/proprietario.repository.js'
 
 class ProprietarioService {
   async create({ nome, cpf, telefone }) {
-    const proprietarioEncontrado = await ProprietarioRepository.listByProprietario({ cpf })
+    const proprietarioJaCadastrado = await ProprietarioRepository.listByProprietario({ cpf })
 
-    if(proprietarioEncontrado) {
+    if(proprietarioJaCadastrado) {
       throw new Error('Proprietário já existe, cpf já cadastrado!');
     }
 
@@ -21,9 +21,7 @@ class ProprietarioService {
 
   async listById({ proprietarioId }) {
     try {
-      const result = await ProprietarioRepository.listById({
-         id: proprietarioId 
-      });
+      const result = await ProprietarioRepository.listById({ proprietarioId });
 
       return { proprietario: result}
     } catch (error) {
@@ -55,39 +53,27 @@ class ProprietarioService {
     };
   }
 
-  update({nome, telefone, proprietarioId}) {
-    const indexProprietario = proprietarios.findIndex(({ id }) => id === proprietarioId);
-    
-    if(indexProprietario === -1) {
-      return {
-        isError: true,
-        message: 'Proprietario não encontrado!'
-      };
-    };
-
-    proprietarios[indexProprietario].nome = nome;
-    proprietarios[indexProprietario].telefone = telefone;
+  async update({ nome, telefone, proprietarioId }) {
+    try {
+      const donoEncontrado = await ProprietarioRepository.listById({ proprietarioId });
+      
+      if(!donoEncontrado) {
+        throw new Error('deu ruimmm');
+      }
+      
+      return await ProprietarioRepository.update({ nome, telefone, proprietarioId })
+    } catch (error) {
+      throw error
+    }  
   }
 
-  delete({proprietarioId}) {
-    const indexProprietario = proprietarios.findIndex(({ id }) => id === proprietarioId);
-
-    if(indexProprietario === -1) {
-      return {
-        isError: true,
-        message: 'Proprietário não encontrado'
-      };
-    };
-
-    const petsDoProprietario = pets.filter(pet => pet.proprietarioId === proprietarioId);
-    if(petsDoProprietario.length > 0) {
-      return {
-        isError: true,
-        message: 'Proprietário possui pets, remova os pets antes de deletar proprietário!'
-      };
-    };
-
-    proprietarios.splice(indexProprietario, 1);
+  async delete({ proprietarioId }) {
+    try {
+      await ProprietarioRepository.listById({ proprietarioId })
+      return await ProprietarioRepository.delete({ proprietarioId })
+    } catch (error) {
+      throw error
+    }
   }
 }
 

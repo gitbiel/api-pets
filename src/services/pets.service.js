@@ -1,28 +1,23 @@
-import { randomUUID } from 'crypto';
-import { proprietarios } from '../db/index.js';
-import { pets  } from '../db/index.js';
+import PetRepository from '../repositories/pet.repository.js'
 
 class PetService {
-  async create({ nome, proprietarioId, idade, peso, raca }){
-    const novoPet = {
-      id: randomUUID(),
-      nome,
-      proprietarioId,
-      idade,
-      peso,
-      raca
-    };
-
-    const donoEncontrado = proprietarios.find(({ id }) => id === proprietarioId);
+  async create({ nome, idade, peso, raca, proprietarioId }){
+    
+    const donoEncontrado = await PetRepository.proprietarioId({ proprietarioId });
     
     if(!donoEncontrado) {
-      return {
-        isError: true,
-        message: 'O proprietario informado não existe',
-      };
+        throw new Error('ProprietarioId informado não existe!');
     }
-  
-    pets.push(novoPet);
+    
+    return await PetRepository.create({ nome, idade, peso, raca, proprietarioId })
+  }
+
+  async list() {
+    try {
+      return await PetRepository.list();
+    } catch (error) {
+      throw error
+    }
   }
 
   listById({petId}) {

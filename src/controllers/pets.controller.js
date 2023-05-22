@@ -1,4 +1,5 @@
 import PetService from '../services/pets.service.js';
+
 class PetController {
   async create(request, response) {
     try {
@@ -7,12 +8,17 @@ class PetController {
         
       return response.status(201).send('Pet cadastrado com sucesso!');
     } catch (error) {
-      return response.status(400).json({ message: result.message });
+      return response.status(400).json({ message: error.message });
     }
   }
 
-  list(_request, response) {
-    return response.send(200, pets);
+  async list(_request, response) {
+    try {
+      const result = await PetService.list();
+      return response.json(result);
+    } catch (error) {
+      return response.status(404).json({ message: error.message });
+    }
   }
 
   listById(request, response) {
