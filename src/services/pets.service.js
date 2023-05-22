@@ -20,18 +20,17 @@ class PetService {
     }
   }
 
-  listById({petId}) {
-    const petEncontrado = pets.find(pet => pet.id == petId);
-  
-    if(!petEncontrado) {
-      return {
-        isError: true,
-        message: 'Pet não encontrado!'
-      };
-    };
+  async listById({ petId }) {
+    try {
+      const result = await PetRepository.listById({ petId })
 
-    return {
-      petEncontrado
+      if(!result) {
+        throw new Error("Pet não encontrado")
+      }
+      
+      return { proprietario: result}
+    } catch (error) {
+      throw error
     }
   }
 

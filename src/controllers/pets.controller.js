@@ -21,19 +21,19 @@ class PetController {
     }
   }
 
-  listById(request, response) {
-    const result = PetService.listById({
-      petId: request.params.id
-    });
+  async listById(request, response) {
+    try {
+      const result = await PetService.listById({ 
+        petId: request.params.id
+      });
 
-    if(result?.isError) {
-      return response.status(404).json({ message: result.message });
+      return response.json(result);
+    } catch (error) {
+    return response.status(404).json({ message: error.message });
     }
-  
-    response.json(result.petEncontrado);
   }
 
-  updateById(request, response) {
+  async updateById(request, response) {
     const { nome, idade, peso, raca } = request.body;
     const result = PetService.update({
       nome, idade, peso, raca,
@@ -47,7 +47,7 @@ class PetController {
     return response.json({ message: 'Pet atualizado com sucesso!'}); 
   }
 
-  deleteById(request, response) {
+  async deleteById(request, response) {
     const result = PetService.delete({
       petId: request.params.id
     })

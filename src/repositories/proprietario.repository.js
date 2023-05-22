@@ -44,7 +44,7 @@ class ProprietarioRepository {
         if (err) {
           reject(err);
         } else if(!row){
-          reject({ message: 'proprietario não encontrado'});
+          reject({ message: 'Proprietario não encontrado'});
         } else {
           resolve(row)
         }
