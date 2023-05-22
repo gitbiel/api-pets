@@ -34,20 +34,13 @@ class PetService {
     }
   }
 
-  update({nome, idade, peso, raca, petId}) {
-    const indexPet = pets.findIndex(({ id }) => id === petId);
-    
-    if(indexPet === -1) {
-      return {
-        isError: true,
-        message: 'Pet não encontrado!'
-      };
-    };
-
-    pets[indexPet].nome = nome;
-    pets[indexPet].idade = idade;
-    pets[indexPet].peso = peso;
-    pets[indexPet].raca = raca;
+  async update({ nome, idade, peso, raca, petId }) {
+    try {
+      await PetRepository.listById({ petId });
+      return await PetRepository.update({ nome, idade, peso, raca, petId })
+    } catch (error) {
+      throw error
+    }  
   }
 
   delete({petId}) {

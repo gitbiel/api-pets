@@ -68,7 +68,7 @@ class ProprietarioRepository {
 
   async update({ nome, telefone, proprietarioId }) {
     return new Promise((resolve, reject) => {
-      this.db.run('UPDATE proprietarios SET nome = ?,telefone = ? WHERE "id" = ?', [nome, telefone, proprietarioId], (err, row) => {
+      this.db.run('UPDATE proprietarios SET nome = ?, telefone = ? WHERE "id" = ?', [nome, telefone, proprietarioId], (err, row) => {
         if (err) {
           reject(err)
         }  else {
