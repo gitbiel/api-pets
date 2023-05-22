@@ -44,7 +44,7 @@ class ProprietarioRepository {
         if (err) {
           reject(err);
         } else if(!row){
-          reject({ message: 'proprietario não encontrado'});
+          reject({ message: 'Proprietario não encontrado'});
         } else {
           resolve(row)
         }
@@ -68,7 +68,7 @@ class ProprietarioRepository {
 
   async update({ nome, telefone, proprietarioId }) {
     return new Promise((resolve, reject) => {
-      this.db.run('UPDATE proprietarios SET nome = ?,telefone = ? WHERE "id" = ?', [nome, telefone, proprietarioId], (err, row) => {
+      this.db.run('UPDATE proprietarios SET nome = ?, telefone = ? WHERE "id" = ?', [nome, telefone, proprietarioId], (err, row) => {
         if (err) {
           reject(err)
         }  else {

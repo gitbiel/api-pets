@@ -37,6 +37,32 @@ class PetRepository {
     });
   }
 
+  async listById({ petId }) {
+    return new Promise((resolve, reject) => {
+      this.db.get('SELECT * FROM pets WHERE id = ?', petId, (err, row) => {
+        if (err) {
+          reject(err);
+        } else if(!row) {
+          reject({ message: 'Pet não encontrado'});
+        } else {
+          resolve(row);
+        }
+      });
+    });
+  };
+
+  async update({ nome, idade, peso, raca, petId }) {
+    return new Promise((resolve, reject) => {
+      this.db.run('UPDATE pets SET nome = ?, idade = ?, peso = ?, raca = ? WHERE "id" = ?', [nome, idade, peso, raca, petId], (err, row) => {
+        if (err) {
+          reject(err)
+        }  else {
+          resolve(row)
+        }
+      })
+    })
+  }
+
   async proprietarioId({ proprietarioId }) {
     return new Promise((resolve, reject) => {
       this.db.get('SELECT Id FROM proprietarios WHERE id = ?', proprietarioId, (err, row) => {

@@ -20,35 +20,27 @@ class PetService {
     }
   }
 
-  listById({petId}) {
-    const petEncontrado = pets.find(pet => pet.id == petId);
-  
-    if(!petEncontrado) {
-      return {
-        isError: true,
-        message: 'Pet não encontrado!'
-      };
-    };
+  async listById({ petId }) {
+    try {
+      const result = await PetRepository.listById({ petId })
 
-    return {
-      petEncontrado
+      if(!result) {
+        throw new Error("Pet não encontrado")
+      }
+      
+      return { proprietario: result}
+    } catch (error) {
+      throw error
     }
   }
 
-  update({nome, idade, peso, raca, petId}) {
-    const indexPet = pets.findIndex(({ id }) => id === petId);
-    
-    if(indexPet === -1) {
-      return {
-        isError: true,
-        message: 'Pet não encontrado!'
-      };
-    };
-
-    pets[indexPet].nome = nome;
-    pets[indexPet].idade = idade;
-    pets[indexPet].peso = peso;
-    pets[indexPet].raca = raca;
+  async update({ nome, idade, peso, raca, petId }) {
+    try {
+      await PetRepository.listById({ petId });
+      return await PetRepository.update({ nome, idade, peso, raca, petId })
+    } catch (error) {
+      throw error
+    }  
   }
 
   delete({petId}) {

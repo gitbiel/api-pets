@@ -55,12 +55,7 @@ class ProprietarioService {
 
   async update({ nome, telefone, proprietarioId }) {
     try {
-      const donoEncontrado = await ProprietarioRepository.listById({ proprietarioId });
-      
-      if(!donoEncontrado) {
-        throw new Error('deu ruimmm');
-      }
-      
+      await ProprietarioRepository.listById({ proprietarioId });
       return await ProprietarioRepository.update({ nome, telefone, proprietarioId })
     } catch (error) {
       throw error
