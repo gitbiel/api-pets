@@ -89,6 +89,18 @@ class ProprietarioRepository {
     })
   }
 
+  async listPetsProprietario({ proprietarioId }) {
+    return new Promise((resolve, reject) => {
+      this.db.all('SELECT * FROM pets WHERE proprietarioId = ?', proprietarioId, (err,rows) => {
+        if (err) {
+          reject(err)
+        } else {
+          resolve(rows)
+        }
+      })
+    })
+  }
+
 }
 
 export default new ProprietarioRepository()

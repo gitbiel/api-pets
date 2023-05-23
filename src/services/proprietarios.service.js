@@ -29,28 +29,14 @@ class ProprietarioService {
     }
   }
 
-  listPetsProprietario({proprietarioId}) {
-    const proprietarioEncontrado = proprietarios.find((proprietario) => proprietario.id === proprietarioId);
-  
-    if(!proprietarioEncontrado) {
-      return {
-        isError: true,
-        message: 'Proprietario não encontrado!'
-      };
-    };
-  
-    const petsDoProprietario = pets.filter(pet => pet.proprietarioId === proprietarioId);
-    if(petsDoProprietario.length === 0) {
-      return {
-        isError: true,
-        message: 'Proprietário não possui pets!'
-      };
-    };
+  async listPetsProprietario({ proprietarioId }) {
+    try {
+      await ProprietarioRepository.listById({ proprietarioId });
+      return await ProprietarioRepository.listPetsProprietario({ proprietarioId })
 
-    return {
-      proprietario: proprietarioEncontrado.nome,
-      pets: petsDoProprietario
-    };
+    } catch (error) {
+      throw error
+    }
   }
 
   async update({ nome, telefone, proprietarioId }) {
