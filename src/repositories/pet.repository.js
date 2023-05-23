@@ -63,6 +63,17 @@ class PetRepository {
     })
   }
 
+  async delete({ petId }) {
+    return new Promise((resolve, reject) => {
+      this.db.run('DELETE FROM pets WHERE id = ?', petId, (err) => {
+        if(err) {
+          reject(err)
+        }
+        resolve()
+      })
+    })
+  }
+
   async proprietarioId({ proprietarioId }) {
     return new Promise((resolve, reject) => {
       this.db.get('SELECT Id FROM proprietarios WHERE id = ?', proprietarioId, (err, row) => {

@@ -46,7 +46,15 @@ class PetController {
   }
 
   async deleteById(request, response) {
-    
+    try {
+      await PetService.delete({
+        petId: request.params.id
+      })
+      
+      return response.status(204).send();
+    } catch (error) {
+      return response.status(400).json({ message: error.message });
+    }
   }
 }
 

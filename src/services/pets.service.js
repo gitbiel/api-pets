@@ -43,17 +43,13 @@ class PetService {
     }  
   }
 
-  delete({petId}) {
-    const indexPet = pets.findIndex(({ id }) => id === petId);
-
-    if(indexPet === -1) {
-      return {
-        isError: true,
-        message: 'Pet não encontrado'
-      };
-    };
-      
-    pets.splice(indexPet, 1);
+  async delete({ petId }) {
+    try {
+      await PetRepository.listById({ petId })
+      return await PetRepository.delete({ petId })
+    } catch (error) {
+      throw error
+    }
   }
 }
 
