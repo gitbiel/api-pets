@@ -2,13 +2,18 @@ import ProprietarioRepository from '../repositories/proprietario.repository.js'
 
 class ProprietarioService {
   async create({ nome, cpf, telefone }) {
-    const proprietarioJaCadastrado = await ProprietarioRepository.listByProprietario({ cpf })
+    try {
+      const proprietarioJaCadastrado = await ProprietarioRepository.listByProprietario({ cpf })
 
     if(proprietarioJaCadastrado) {
       throw new Error('Proprietário já existe, cpf já cadastrado!');
     }
 
     return await ProprietarioRepository.create({ nome, cpf, telefone })
+    } catch (error) {
+      throw error
+    }
+    
   }
 
   async list() {
@@ -21,41 +26,41 @@ class ProprietarioService {
 
   async listById({ proprietarioId }) {
     try {
-      const result = await ProprietarioRepository.listById({ proprietarioId });
+      const ownerExist = await ProprietarioRepository.listById({ proprietarioId });
 
-      return { proprietario: result}
+      if(!ownerExist) {
+        throw new Error('Proprietario não encontrado')
+      } 
+
+      return { Proprietario:  ownerExist}
     } catch (error) {
       throw error
     }
   }
 
-  listPetsProprietario({proprietarioId}) {
-    const proprietarioEncontrado = proprietarios.find((proprietario) => proprietario.id === proprietarioId);
-  
-    if(!proprietarioEncontrado) {
-      return {
-        isError: true,
-        message: 'Proprietario não encontrado!'
-      };
-    };
-  
-    const petsDoProprietario = pets.filter(pet => pet.proprietarioId === proprietarioId);
-    if(petsDoProprietario.length === 0) {
-      return {
-        isError: true,
-        message: 'Proprietário não possui pets!'
-      };
-    };
+  async listPetsProprietario({ proprietarioId }) {
+    try {
+      const ownerExist = await ProprietarioRepository.listById({ proprietarioId });
 
-    return {
-      proprietario: proprietarioEncontrado.nome,
-      pets: petsDoProprietario
-    };
+      if(!ownerExist) {
+        throw new Error('Proprietario não encontrado')
+      } 
+
+      return await ProprietarioRepository.listPetsProprietario({ proprietarioId })
+
+    } catch (error) {
+      throw error
+    }
   }
 
   async update({ nome, telefone, proprietarioId }) {
     try {
-      await ProprietarioRepository.listById({ proprietarioId });
+      const ownerExist = await ProprietarioRepository.listById({ proprietarioId });
+
+      if(!ownerExist) {
+        throw new Error('Proprietario não encontrado')
+      } 
+
       return await ProprietarioRepository.update({ nome, telefone, proprietarioId })
     } catch (error) {
       throw error
@@ -64,7 +69,18 @@ class ProprietarioService {
 
   async delete({ proprietarioId }) {
     try {
-      await ProprietarioRepository.listById({ proprietarioId })
+      const ownerExist = await ProprietarioRepository.listById({ proprietarioId })
+      
+      if(!ownerExist) {
+        throw new Error('Proprietario não encontrado')
+      } 
+
+      const areTherePets = await ProprietarioRepository.listPetsProprietario({ proprietarioId })
+      
+      if (areTherePets.length > 0) {
+        throw new Error("Proprietário possui pets, delete-os primeiro")
+      }
+
       return await ProprietarioRepository.delete({ proprietarioId })
     } catch (error) {
       throw error
