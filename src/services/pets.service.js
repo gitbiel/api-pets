@@ -2,14 +2,18 @@ import PetRepository from '../repositories/pet.repository.js'
 
 class PetService {
   async create({ nome, idade, peso, raca, proprietarioId }){
-    
-    const donoEncontrado = await PetRepository.proprietarioId({ proprietarioId });
+    try {
+      const donoEncontrado = await PetRepository.proprietarioId({ proprietarioId });
     
     if(!donoEncontrado) {
         throw new Error('ProprietarioId informado não existe!');
     }
     
     return await PetRepository.create({ nome, idade, peso, raca, proprietarioId })
+    } catch (error) {
+      throw error
+    }
+    
   }
 
   async list() {
@@ -22,13 +26,13 @@ class PetService {
 
   async listById({ petId }) {
     try {
-      const result = await PetRepository.listById({ petId })
+      const petExist = await PetRepository.listById({ petId })
 
-      if(!result) {
+      if(!petExist) {
         throw new Error("Pet não encontrado")
       }
       
-      return { proprietario: result}
+      return { Pet: petExist}
     } catch (error) {
       throw error
     }
@@ -36,7 +40,12 @@ class PetService {
 
   async update({ nome, idade, peso, raca, petId }) {
     try {
-      await PetRepository.listById({ petId });
+      const petExist =  await PetRepository.listById({ petId });
+
+      if(!petExist) {
+        throw new Error("Pet não encontrado")
+      }
+
       return await PetRepository.update({ nome, idade, peso, raca, petId })
     } catch (error) {
       throw error
@@ -45,7 +54,12 @@ class PetService {
 
   async delete({ petId }) {
     try {
-      await PetRepository.listById({ petId })
+      const petExist = await PetRepository.listById({ petId })
+
+      if(!petExist) {
+        throw new Error("Pet não encontrado")
+      }
+
       return await PetRepository.delete({ petId })
     } catch (error) {
       throw error

@@ -43,9 +43,7 @@ class ProprietarioRepository {
       this.db.get('SELECT * FROM proprietarios WHERE id = ?', proprietarioId, (err, row) => {
         if (err) {
           reject(err);
-        } else if(!row){
-          reject({ message: 'Proprietario não encontrado'});
-        } else {
+        }  else {
           resolve(row)
         }
       });
@@ -89,6 +87,11 @@ class ProprietarioRepository {
     })
   }
 
+  // /**
+  //  * 
+  //  * @param {*} param0 
+  //  * @returns { Promise<Array<{id: string}>> }
+  //  */
   async listPetsProprietario({ proprietarioId }) {
     return new Promise((resolve, reject) => {
       this.db.all('SELECT * FROM pets WHERE proprietarioId = ?', proprietarioId, (err,rows) => {
